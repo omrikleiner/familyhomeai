@@ -1,6 +1,31 @@
 import React, { useMemo, useState } from 'react';
 import { FamilyMember, FamilyTask } from '../types/models';
 
+function toISODate(date: Date) {
+  // Local YYYY-MM-DD, matching what <input type="date"> emits.
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, '0');
+  const day = `${date.getDate()}`.padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function quickDateOptions() {
+  const today = new Date();
+
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+
+  // Nearest upcoming Saturday (weekend in Israel); today if it's already Saturday.
+  const weekend = new Date(today);
+  weekend.setDate(today.getDate() + ((6 - today.getDay() + 7) % 7));
+
+  return [
+    { label: 'היום', value: toISODate(today) },
+    { label: 'מחר', value: toISODate(tomorrow) },
+    { label: 'סוף שבוע', value: toISODate(weekend) },
+  ];
+}
+
 interface TasksCardProps {
   tasks: FamilyTask[];
   familyMembers: FamilyMember[];
@@ -106,15 +131,29 @@ export default function TasksCard({
             );
           })}
         </div>
-        <label>
-          תאריך יעד
+        <div className="field-label">תאריך יעד</div>
+        <div className="date-picker">
+          <div className="date-quick">
+            {quickDateOptions().map((option) => (
+              <button
+                key={option.label}
+                type="button"
+                className={dueDate === option.value ? 'date-chip active' : 'date-chip'}
+                onClick={() =>
+                  setDueDate((prev) => (prev === option.value ? '' : option.value))
+                }
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
           <input
             type="date"
             value={dueDate}
             onChange={(event) => setDueDate(event.target.value)}
-            placeholder="בחר תאריך"
+            aria-label="תאריך יעד מותאם"
           />
-        </label>
+        </div>
         <button type="submit" className="primary-button">הוסף מטלה</button>
       </form>
 
