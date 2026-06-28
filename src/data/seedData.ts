@@ -8,9 +8,9 @@ export const seedData: AppState = {
     { id: '4', name: 'נועה', role: 'child', avatarEmoji: '👧' },
   ],
   tasks: [
-    { id: 't1', title: 'להוציא את הכלב', assignedToMemberId: '1', dueDate: 'היום', status: 'open' },
-    { id: 't2', title: 'לסדר חדר', assignedToMemberId: '1', dueDate: 'היום', status: 'open' },
-    { id: 't3', title: 'להוריד כביסה', assignedToMemberId: '2', dueDate: 'מחר', status: 'open' },
+    { id: 't1', title: 'להוציא את הכלב', createdByMemberId: '1', assignedToMemberIds: ['1'], dueDate: 'היום', status: 'open' },
+    { id: 't2', title: 'לסדר חדר', createdByMemberId: '1', assignedToMemberIds: ['1'], dueDate: 'היום', status: 'open' },
+    { id: 't3', title: 'להוריד כביסה', createdByMemberId: '2', assignedToMemberIds: ['2'], dueDate: 'מחר', status: 'open' },
   ],
   shoppingItems: [
     { id: 's1', title: 'חלב', quantity: '2', category: 'מזון', isPurchased: false },

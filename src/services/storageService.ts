@@ -16,13 +16,32 @@ export function loadAppState(): AppState {
     }
 
     const parsed = JSON.parse(raw) as AppState;
+    const familyMembers = parsed.familyMembers ?? seedData.familyMembers;
+    const defaultMemberId = familyMembers[0]?.id ?? seedData.familyMembers[0].id;
+
+    // Migrate tasks: ensure creator, assignee list and status exist on legacy data.
+    const tasks = (parsed.tasks ?? seedData.tasks).map((task) => {
+      const legacyAssignee = (task as { assignedToMemberId?: string }).assignedToMemberId;
+      const assignedToMemberIds =
+        task.assignedToMemberIds ?? (legacyAssignee ? [legacyAssignee] : []);
+
+      return {
+        ...task,
+        createdByMemberId: task.createdByMemberId ?? legacyAssignee ?? defaultMemberId,
+        assignedToMemberIds,
+        status: task.status ?? 'open',
+      };
+    });
+
+    // Migrate shopping items: normalize categories to a known value.
     const shoppingItems = (parsed.shoppingItems ?? seedData.shoppingItems).map((item) => ({
       ...item,
       category: SHOPPING_CATEGORIES.includes(item.category) ? item.category : 'אחר',
     }));
+
     return {
-      familyMembers: parsed.familyMembers ?? seedData.familyMembers,
-      tasks: parsed.tasks ?? seedData.tasks,
+      familyMembers,
+      tasks,
       shoppingItems,
       events: parsed.events ?? seedData.events,
     };

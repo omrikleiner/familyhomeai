@@ -504,6 +504,60 @@ textarea {
   border-color: var(--text-faint);
 }
 
+/* ---------- Tasks specifics ---------- */
+.field-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: -8px;
+}
+
+.assignee-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface-muted);
+}
+
+.assignee-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text);
+  transition: background 0.15s var(--ease), border-color 0.15s var(--ease);
+}
+
+.assignee-chip:hover {
+  border-color: var(--text-faint);
+}
+
+.assignee-chip.selected {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+  color: var(--primary-hover);
+}
+
+.assignee-chip input {
+  width: auto;
+  accent-color: var(--primary);
+}
+
+.task-buttons {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
 /* ---------- Item lists ---------- */
 .item-list {
   list-style: none;

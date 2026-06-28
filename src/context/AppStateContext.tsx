@@ -21,9 +21,13 @@ interface AppStateContextValue {
   shoppingToBuy: number;
   upcomingEvents: number;
   profileName: string;
-  handleToggleTask: (taskId: string) => void;
+  currentUserId: string;
+  setCurrentUserId: (userId: string) => void;
+  handleCompleteTask: (taskId: string) => void;
+  handleFailTask: (taskId: string) => void;
+  handleDeleteTask: (taskId: string) => void;
   handleToggleShoppingItem: (itemId: string) => void;
-  handleAddTask: (title: string, assignedToMemberId: string, dueDate: string) => void;
+  handleAddTask: (title: string, assignedToMemberIds: string[], dueDate: string) => void;
   handleAddShoppingItem: (title: string, quantity: string, category?: ShoppingCategory) => void;
   handleEditShoppingItem: (
     itemId: string,
@@ -38,14 +42,26 @@ const AppStateContext = createContext<AppStateContextValue | null>(null);
 
 export function AppStateProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<AppState>(seedData);
+  const [currentUserId, setCurrentUserId] = useState<string>(
+    seedData.familyMembers[0]?.id ?? ''
+  );
 
   useEffect(() => {
-    setState(loadAppState());
+    const stored = loadAppState();
+    setState(stored);
+    setCurrentUserId((prev) => stored.familyMembers[0]?.id ?? prev);
   }, []);
 
   useEffect(() => {
     saveAppState(state);
   }, [state]);
+
+  // Keep the active user valid if the family list changes.
+  useEffect(() => {
+    if (!state.familyMembers.some((member) => member.id === currentUserId)) {
+      setCurrentUserId(state.familyMembers[0]?.id ?? '');
+    }
+  }, [state.familyMembers, currentUserId]);
 
   const openTasks = useMemo(
     () => state.tasks.filter((task) => task.status === 'open').length,
@@ -65,14 +81,27 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
     setState((prev) => ({ ...prev, ...updated }));
   }
 
-  function handleToggleTask(taskId: string) {
+  function removeTask(taskId: string) {
     updateState({
-      tasks: state.tasks.map((task) =>
-        task.id === taskId
-          ? { ...task, status: task.status === 'done' ? 'open' : 'done' }
-          : task
-      ),
+      tasks: state.tasks.filter((task) => task.id !== taskId),
     });
+  }
+
+  function handleCompleteTask(taskId: string) {
+    removeTask(taskId);
+  }
+
+  function handleFailTask(taskId: string) {
+    removeTask(taskId);
+  }
+
+  function handleDeleteTask(taskId: string) {
+    // Only the creator may delete a task they opened.
+    const task = state.tasks.find((item) => item.id === taskId);
+    if (!task || task.createdByMemberId !== currentUserId) {
+      return;
+    }
+    removeTask(taskId);
   }
 
   function handleToggleShoppingItem(itemId: string) {
@@ -83,11 +112,12 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
     });
   }
 
-  function handleAddTask(title: string, assignedToMemberId: string, dueDate: string) {
+  function handleAddTask(title: string, assignedToMemberIds: string[], dueDate: string) {
     const newTask: FamilyTask = {
       id: generateId('task'),
       title,
-      assignedToMemberId,
+      createdByMemberId: currentUserId || state.familyMembers[0]?.id || 'unknown',
+      assignedToMemberIds,
       dueDate,
       status: 'open',
     };
@@ -149,7 +179,11 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
     shoppingToBuy,
     upcomingEvents,
     profileName,
-    handleToggleTask,
+    currentUserId,
+    setCurrentUserId,
+    handleCompleteTask,
+    handleFailTask,
+    handleDeleteTask,
     handleToggleShoppingItem,
     handleAddTask,
     handleAddShoppingItem,
