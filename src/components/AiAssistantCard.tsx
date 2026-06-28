@@ -3,7 +3,7 @@ import { AiSuggestion, FamilyTask, ShoppingItem, FamilyEvent } from '../types/mo
 import { parseAiRequest } from '../services/aiParserService';
 
 interface AiAssistantCardProps {
-  onAddTask: (title: string, assignedToMemberId: string, dueDate: string) => void;
+  onAddTask: (title: string, assignedToMemberIds: string[], dueDate: string) => void;
   onAddShoppingItem: (title: string, quantity: string) => void;
   onAddEvent: (title: string, date: string, time: string, location: string) => void;
   familyMembers: { id: string; name: string }[];
@@ -30,7 +30,7 @@ export default function AiAssistantCard({
     }
 
     if (suggestion.intent === 'task') {
-      onAddTask(suggestion.title, selectedMemberId, 'היום');
+      onAddTask(suggestion.title, [selectedMemberId], 'היום');
     } else if (suggestion.intent === 'shopping') {
       onAddShoppingItem(suggestion.title, '1');
     } else if (suggestion.intent === 'event') {

@@ -16,9 +16,18 @@ export function loadAppState(): AppState {
     }
 
     const parsed = JSON.parse(raw) as AppState;
+    const familyMembers = parsed.familyMembers ?? seedData.familyMembers;
+    const defaultMemberId = familyMembers[0]?.id ?? seedData.familyMembers[0].id;
+
+    const tasks = (parsed.tasks ?? seedData.tasks).map((task) => ({
+      ...task,
+      createdByMemberId: task.createdByMemberId ?? task.assignedToMemberId ?? defaultMemberId,
+      status: task.status ?? 'open',
+    }));
+
     return {
-      familyMembers: parsed.familyMembers ?? seedData.familyMembers,
-      tasks: parsed.tasks ?? seedData.tasks,
+      familyMembers,
+      tasks,
       shoppingItems: parsed.shoppingItems ?? seedData.shoppingItems,
       events: parsed.events ?? seedData.events,
     };
