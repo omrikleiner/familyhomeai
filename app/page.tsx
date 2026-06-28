@@ -27,11 +27,19 @@ function generateId(prefix: string) {
 export default function Home() {
   const [activeSection, setActiveSection] = useState(DEFAULT_SECTION);
   const [state, setState] = useState<AppState>(seedData);
+  const [currentUserId, setCurrentUserId] = useState<string>(seedData.familyMembers[0]?.id ?? '');
 
   useEffect(() => {
     const stored = loadAppState();
     setState(stored);
+    setCurrentUserId(stored.familyMembers[0]?.id ?? currentUserId);
   }, []);
+
+  useEffect(() => {
+    if (!state.familyMembers.some((member) => member.id === currentUserId)) {
+      setCurrentUserId(state.familyMembers[0]?.id ?? '');
+    }
+  }, [state.familyMembers, currentUserId]);
 
   useEffect(() => {
     saveAppState(state);
@@ -55,14 +63,27 @@ export default function Home() {
     setState((prev) => ({ ...prev, ...updated }));
   }
 
-  function handleToggleTask(taskId: string) {
+  function removeTask(taskId: string) {
     updateState({
-      tasks: state.tasks.map((task) =>
-        task.id === taskId
-          ? { ...task, status: task.status === 'done' ? 'open' : 'done' }
-          : task
-      ),
+      tasks: state.tasks.filter((task) => task.id !== taskId),
     });
+  }
+
+  function handleCompleteTask(taskId: string) {
+    removeTask(taskId);
+  }
+
+  function handleDeleteTask(taskId: string) {
+    const task = state.tasks.find((item) => item.id === taskId);
+    if (!task || task.createdByMemberId !== currentUserId) {
+      return;
+    }
+
+    removeTask(taskId);
+  }
+
+  function handleFailTask(taskId: string) {
+    removeTask(taskId);
   }
 
   function handleToggleShoppingItem(itemId: string) {
@@ -73,11 +94,12 @@ export default function Home() {
     });
   }
 
-  function handleAddTask(title: string, assignedToMemberId: string, dueDate: string) {
+  function handleAddTask(title: string, assignedToMemberIds: string[], dueDate: string) {
     const newTask: FamilyTask = {
       id: generateId('task'),
       title,
-      assignedToMemberId,
+      createdByMemberId: currentUserId || state.familyMembers[0]?.id || 'unknown',
+      assignedToMemberIds,
       dueDate,
       status: 'open',
     };
@@ -130,10 +152,13 @@ export default function Home() {
           <TasksCard
             tasks={state.tasks}
             familyMembers={state.familyMembers}
-            onToggleTask={handleToggleTask}
+            currentUserId={currentUserId}
+            onChangeUser={setCurrentUserId}
+            onCompleteTask={handleCompleteTask}
+            onDeleteTask={handleDeleteTask}
+            onFailTask={handleFailTask}
             onAddTask={handleAddTask}
           />
-
           <ShoppingListCard
             items={state.shoppingItems}
             onAddItem={handleAddShoppingItem}

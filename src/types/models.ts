@@ -12,7 +12,8 @@ export type TaskStatus = 'open' | 'done';
 export interface FamilyTask {
   id: string;
   title: string;
-  assignedToMemberId: string;
+  createdByMemberId: string;
+  assignedToMemberIds: string[];
   dueDate?: string;
   status: TaskStatus;
 }
