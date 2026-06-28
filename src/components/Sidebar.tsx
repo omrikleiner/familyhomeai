@@ -1,27 +1,13 @@
+'use client';
+
 import React from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { navItems } from './navigation';
 
-type SidebarItem = {
-  key: string;
-  label: string;
-  icon: string;
-};
+export default function Sidebar() {
+  const pathname = usePathname();
 
-const menuItems: SidebarItem[] = [
-  { key: 'home', label: 'בית', icon: '🏠' },
-  { key: 'family', label: 'פרופיל משפחתי', icon: '👪' },
-  { key: 'events', label: 'אירועים', icon: '📅' },
-  { key: 'tasks', label: 'מטלות', icon: '✅' },
-  { key: 'shopping', label: 'קניות', icon: '🛒' },
-  { key: 'ai', label: 'עוזר AI', icon: '🤖' },
-  { key: 'settings', label: 'הגדרות', icon: '⚙️' },
-];
-
-interface SidebarProps {
-  activeKey: string;
-  onChange: (key: string) => void;
-}
-
-export default function Sidebar({ activeKey, onChange }: SidebarProps) {
   return (
     <aside className="sidebar">
       <div className="brand">
@@ -33,17 +19,21 @@ export default function Sidebar({ activeKey, onChange }: SidebarProps) {
       </div>
 
       <nav className="menu">
-        {menuItems.map((item) => (
-          <button
-            type="button"
-            key={item.key}
-            className={item.key === activeKey ? 'menu-item active' : 'menu-item'}
-            onClick={() => onChange(item.key)}
-          >
-            <span className="menu-icon">{item.icon}</span>
-            <span>{item.label}</span>
-          </button>
-        ))}
+        {navItems.map((item) => {
+          const isActive =
+            item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
+
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={isActive ? 'menu-item active' : 'menu-item'}
+            >
+              <span className="menu-icon">{item.icon}</span>
+              <span>{item.label}</span>
+            </Link>
+          );
+        })}
       </nav>
 
       <div className="sidebar-footer">

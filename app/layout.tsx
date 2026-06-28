@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import AppShell from '../src/components/AppShell';
 
 export const metadata: Metadata = {
   title: 'Family House AI',
@@ -13,7 +14,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="he" dir="rtl">
-      <body>{children}</body>
+      <body>
+        <AppShell>{children}</AppShell>
+      </body>
     </html>
   );
 }

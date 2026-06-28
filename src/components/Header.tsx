@@ -1,35 +1,21 @@
+'use client';
+
 import React from 'react';
+import { usePathname } from 'next/navigation';
+import { useAppState } from '../context/AppStateContext';
+import { labelForPath } from './navigation';
 
-interface HeaderProps {
-  activeSection: string;
-  profileName: string;
-  openTasks: number;
-  shoppingToBuy: number;
-  upcomingEvents: number;
-}
+export default function Header() {
+  const pathname = usePathname();
+  const { profileName, openTasks, shoppingToBuy, upcomingEvents } = useAppState();
 
-const sectionLabels: Record<string, string> = {
-  home: 'בית',
-  family: 'פרופיל משפחתי',
-  events: 'אירועים',
-  tasks: 'מטלות',
-  shopping: 'קניות',
-  ai: 'עוזר AI',
-  settings: 'הגדרות',
-};
-
-export default function Header({
-  activeSection,
-  profileName,
-  openTasks,
-  shoppingToBuy,
-  upcomingEvents,
-}: HeaderProps) {
   return (
     <header className="header-shell">
       <div>
         <p className="eyebrow">דאשבורד משפחתי</p>
-        <h1>שלום {profileName} — {sectionLabels[activeSection] || 'בית'}</h1>
+        <h1>
+          שלום {profileName} — {labelForPath(pathname)}
+        </h1>
       </div>
 
       <div className="header-chips">
