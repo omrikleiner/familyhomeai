@@ -14,6 +14,7 @@ import { seedData } from '../src/data/seedData';
 import {
   FamilyTask,
   ShoppingItem,
+  ShoppingCategory,
   FamilyEvent,
   AppState,
 } from '../src/types/models';
@@ -85,15 +86,39 @@ export default function Home() {
     updateState({ tasks: [newTask, ...state.tasks] });
   }
 
-  function handleAddShoppingItem(title: string, quantity: string) {
+  function handleAddShoppingItem(title: string, quantity: string, category: ShoppingCategory = 'אחר') {
     const newItem: ShoppingItem = {
       id: generateId('shopping'),
       title,
       quantity,
+      category,
       isPurchased: false,
     };
 
     updateState({ shoppingItems: [newItem, ...state.shoppingItems] });
+  }
+
+  function handleEditShoppingItem(
+    itemId: string,
+    fields: { title: string; quantity: string; category: ShoppingCategory }
+  ) {
+    updateState({
+      shoppingItems: state.shoppingItems.map((item) =>
+        item.id === itemId ? { ...item, ...fields } : item
+      ),
+    });
+  }
+
+  function handleDeleteShoppingItem(itemId: string) {
+    updateState({
+      shoppingItems: state.shoppingItems.filter((item) => item.id !== itemId),
+    });
+  }
+
+  function handleClearPurchasedShopping() {
+    updateState({
+      shoppingItems: state.shoppingItems.filter((item) => !item.isPurchased),
+    });
   }
 
   function handleAddEvent(title: string, date: string, time: string, location: string) {
@@ -138,6 +163,9 @@ export default function Home() {
             items={state.shoppingItems}
             onAddItem={handleAddShoppingItem}
             onToggleItem={handleToggleShoppingItem}
+            onEditItem={handleEditShoppingItem}
+            onDeleteItem={handleDeleteShoppingItem}
+            onClearPurchased={handleClearPurchasedShopping}
           />
 
           <EventsCard events={state.events} onAddEvent={handleAddEvent} />

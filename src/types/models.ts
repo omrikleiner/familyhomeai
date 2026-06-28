@@ -17,10 +17,21 @@ export interface FamilyTask {
   status: TaskStatus;
 }
 
+export type ShoppingCategory = 'מזון' | 'ניקיון' | 'ירקות ופירות' | 'מאפים' | 'אחר';
+
+export const SHOPPING_CATEGORIES: ShoppingCategory[] = [
+  'מזון',
+  'ירקות ופירות',
+  'מאפים',
+  'ניקיון',
+  'אחר',
+];
+
 export interface ShoppingItem {
   id: string;
   title: string;
   quantity?: string;
+  category: ShoppingCategory;
   isPurchased: boolean;
 }
 

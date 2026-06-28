@@ -13,9 +13,11 @@ export const seedData: AppState = {
     { id: 't3', title: 'להוריד כביסה', assignedToMemberId: '2', dueDate: 'מחר', status: 'open' },
   ],
   shoppingItems: [
-    { id: 's1', title: 'חלב', quantity: '2', isPurchased: false },
-    { id: 's2', title: 'ביצים', quantity: '12', isPurchased: false },
-    { id: 's3', title: 'לחם', quantity: '1', isPurchased: true },
+    { id: 's1', title: 'חלב', quantity: '2', category: 'מזון', isPurchased: false },
+    { id: 's2', title: 'ביצים', quantity: '12', category: 'מזון', isPurchased: false },
+    { id: 's3', title: 'לחם', quantity: '1', category: 'מאפים', isPurchased: true },
+    { id: 's4', title: 'עגבניות', quantity: '6', category: 'ירקות ופירות', isPurchased: false },
+    { id: 's5', title: 'נוזל כלים', quantity: '1', category: 'ניקיון', isPurchased: false },
   ],
   events: [
     { id: 'e1', title: 'חוג כדורגל', date: 'היום', time: '17:00', location: 'מגרש שכונתי' },

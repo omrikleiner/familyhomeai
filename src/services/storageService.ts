@@ -1,4 +1,4 @@
-import { AppState } from '../types/models';
+import { AppState, SHOPPING_CATEGORIES } from '../types/models';
 import { seedData } from '../data/seedData';
 
 export const STORAGE_KEY = 'family-house-ai-state';
@@ -16,10 +16,14 @@ export function loadAppState(): AppState {
     }
 
     const parsed = JSON.parse(raw) as AppState;
+    const shoppingItems = (parsed.shoppingItems ?? seedData.shoppingItems).map((item) => ({
+      ...item,
+      category: SHOPPING_CATEGORIES.includes(item.category) ? item.category : 'אחר',
+    }));
     return {
       familyMembers: parsed.familyMembers ?? seedData.familyMembers,
       tasks: parsed.tasks ?? seedData.tasks,
-      shoppingItems: parsed.shoppingItems ?? seedData.shoppingItems,
+      shoppingItems,
       events: parsed.events ?? seedData.events,
     };
   } catch {
