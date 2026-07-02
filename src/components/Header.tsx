@@ -20,7 +20,7 @@ export default function Header() {
 
       <div className="header-chips">
         <span className="chip">מטלות פתוחות: {openTasks}</span>
-        <span className="chip">קניות לחודש: {shoppingToBuy}</span>
+        <span className="chip">קניות פתוחות: {shoppingToBuy}</span>
         <span className="chip">אירועים קרובים: {upcomingEvents}</span>
       </div>
     </header>

@@ -11,13 +11,13 @@ export default function HomePage() {
     <>
       <section className="summary-grid">
         <Link href="/tasks" className="summary-link">
-          <DashboardCard title="מטלות" value={openTasks} description="מטלות שעדיין פתוחות למשפחה" />
+          <DashboardCard title="מטלות" value={openTasks} description="מטלות שעדיין פתוחות למשפחה" icon="✅" />
         </Link>
         <Link href="/shopping" className="summary-link">
-          <DashboardCard title="קניות" value={shoppingToBuy} description="פריטים שעדיין לא קנו" />
+          <DashboardCard title="קניות" value={shoppingToBuy} description="פריטים שעדיין לא קנו" icon="🛒" />
         </Link>
         <Link href="/events" className="summary-link">
-          <DashboardCard title="אירועים" value={upcomingEvents} description="אירועים קרובים וזכרונות משפחתיים" />
+          <DashboardCard title="אירועים" value={upcomingEvents} description="אירועים קרובים וזכרונות משפחתיים" icon="📅" />
         </Link>
       </section>
 

@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
-import { AiSuggestion, FamilyTask, ShoppingItem, FamilyEvent } from '../types/models';
+import { AiIntent, AiSuggestion } from '../types/models';
 import { parseAiRequest } from '../services/aiParserService';
+
+const INTENT_LABELS: Record<AiIntent, string> = {
+  task: 'מטלה',
+  shopping: 'קנייה',
+  event: 'אירוע',
+  unknown: 'לא זוהה',
+};
 
 interface AiAssistantCardProps {
   onAddTask: (title: string, assignedToMemberIds: string[], dueDate: string) => void;
@@ -73,7 +80,7 @@ export default function AiAssistantCard({
       {suggestion && (
         <div className="ai-suggestion">
           <p><strong>כותרת:</strong> {suggestion.title}</p>
-          <p><strong>כוונה:</strong> {suggestion.intent}</p>
+          <p><strong>כוונה:</strong> {INTENT_LABELS[suggestion.intent]}</p>
           <p><strong>ביטחון:</strong> {Math.round(suggestion.confidence * 100)}%</p>
 
           {suggestion.intent === 'task' && (

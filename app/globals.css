@@ -80,6 +80,18 @@ button {
   cursor: pointer;
 }
 
+/* Visible keyboard focus for accessibility */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+a,
+.summary-link {
+  border-radius: var(--radius-lg);
+}
+
 h1,
 h2,
 h3 {
@@ -312,12 +324,33 @@ h3 {
   transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease);
 }
 
+.summary-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .summary-card h3 {
   margin: 0;
   font-family: var(--font-serif);
   font-size: 1.05rem;
   color: var(--text-muted);
   font-weight: 600;
+}
+
+.summary-icon {
+  position: relative;
+  z-index: 1;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  font-size: 1.2rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
 }
 
 .summary-value {

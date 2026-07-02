@@ -54,16 +54,20 @@ export default function EventsCard({ events, onAddEvent }: EventsCardProps) {
         <button type="submit" className="primary-button">הוסף אירוע</button>
       </form>
 
-      <ul className="item-list">
-        {upcomingEvents.map((item) => (
-          <li key={item.id}>
-            <div className="item-content">
-              <span className="item-title">{item.title}</span>
-              <span className="item-meta">{item.date}{item.time ? ` • ${item.time}` : ''}{item.location ? ` • ${item.location}` : ''}</span>
-            </div>
-          </li>
-        ))}
-      </ul>
+      {upcomingEvents.length === 0 ? (
+        <p className="empty-state">אין אירועים קרובים — הוסיפו אירוע ראשון 📅</p>
+      ) : (
+        <ul className="item-list">
+          {upcomingEvents.map((item) => (
+            <li key={item.id}>
+              <div className="item-content">
+                <span className="item-title">{item.title}</span>
+                <span className="item-meta">{item.date}{item.time ? ` • ${item.time}` : ''}{item.location ? ` • ${item.location}` : ''}</span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   );
 }

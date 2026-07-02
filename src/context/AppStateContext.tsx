@@ -77,14 +77,12 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
 
   const profileName = state.familyMembers[0]?.name || 'משפחה';
 
-  function updateState(updated: Partial<AppState>) {
-    setState((prev) => ({ ...prev, ...updated }));
-  }
-
+  // All mutators use functional updates so batched calls never read stale state.
   function removeTask(taskId: string) {
-    updateState({
-      tasks: state.tasks.filter((task) => task.id !== taskId),
-    });
+    setState((prev) => ({
+      ...prev,
+      tasks: prev.tasks.filter((task) => task.id !== taskId),
+    }));
   }
 
   function handleCompleteTask(taskId: string) {
@@ -97,31 +95,36 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
 
   function handleDeleteTask(taskId: string) {
     // Only the creator may delete a task they opened.
-    const task = state.tasks.find((item) => item.id === taskId);
-    if (!task || task.createdByMemberId !== currentUserId) {
-      return;
-    }
-    removeTask(taskId);
-  }
-
-  function handleToggleShoppingItem(itemId: string) {
-    updateState({
-      shoppingItems: state.shoppingItems.map((item) =>
-        item.id === itemId ? { ...item, isPurchased: !item.isPurchased } : item
-      ),
+    setState((prev) => {
+      const task = prev.tasks.find((item) => item.id === taskId);
+      if (!task || task.createdByMemberId !== currentUserId) {
+        return prev;
+      }
+      return { ...prev, tasks: prev.tasks.filter((item) => item.id !== taskId) };
     });
   }
 
+  function handleToggleShoppingItem(itemId: string) {
+    setState((prev) => ({
+      ...prev,
+      shoppingItems: prev.shoppingItems.map((item) =>
+        item.id === itemId ? { ...item, isPurchased: !item.isPurchased } : item
+      ),
+    }));
+  }
+
   function handleAddTask(title: string, assignedToMemberIds: string[], dueDate: string) {
-    const newTask: FamilyTask = {
-      id: generateId('task'),
-      title,
-      createdByMemberId: currentUserId || state.familyMembers[0]?.id || 'unknown',
-      assignedToMemberIds,
-      dueDate,
-      status: 'open',
-    };
-    updateState({ tasks: [newTask, ...state.tasks] });
+    setState((prev) => {
+      const newTask: FamilyTask = {
+        id: generateId('task'),
+        title,
+        createdByMemberId: currentUserId || prev.familyMembers[0]?.id || 'unknown',
+        assignedToMemberIds,
+        dueDate,
+        status: 'open',
+      };
+      return { ...prev, tasks: [newTask, ...prev.tasks] };
+    });
   }
 
   function handleAddShoppingItem(
@@ -136,30 +139,33 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
       category,
       isPurchased: false,
     };
-    updateState({ shoppingItems: [newItem, ...state.shoppingItems] });
+    setState((prev) => ({ ...prev, shoppingItems: [newItem, ...prev.shoppingItems] }));
   }
 
   function handleEditShoppingItem(
     itemId: string,
     fields: { title: string; quantity: string; category: ShoppingCategory }
   ) {
-    updateState({
-      shoppingItems: state.shoppingItems.map((item) =>
+    setState((prev) => ({
+      ...prev,
+      shoppingItems: prev.shoppingItems.map((item) =>
         item.id === itemId ? { ...item, ...fields } : item
       ),
-    });
+    }));
   }
 
   function handleDeleteShoppingItem(itemId: string) {
-    updateState({
-      shoppingItems: state.shoppingItems.filter((item) => item.id !== itemId),
-    });
+    setState((prev) => ({
+      ...prev,
+      shoppingItems: prev.shoppingItems.filter((item) => item.id !== itemId),
+    }));
   }
 
   function handleClearPurchasedShopping() {
-    updateState({
-      shoppingItems: state.shoppingItems.filter((item) => !item.isPurchased),
-    });
+    setState((prev) => ({
+      ...prev,
+      shoppingItems: prev.shoppingItems.filter((item) => !item.isPurchased),
+    }));
   }
 
   function handleAddEvent(title: string, date: string, time: string, location: string) {
@@ -170,7 +176,7 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
       time,
       location,
     };
-    updateState({ events: [newEvent, ...state.events] });
+    setState((prev) => ({ ...prev, events: [newEvent, ...prev.events] }));
   }
 
   const value: AppStateContextValue = {
